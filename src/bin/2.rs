@@ -1,49 +1,64 @@
 use std::collections::HashMap;
 
 static INPUT: &'static str = include_str!("input/2.txt");
-//static INPUT: &'static str = "abcdef bababc abbcde abcccd aabcdd abcdee ababab";
 
 fn main() {
-    //    println!("1. {}", one());
-    assert_eq!(5904, one());
-    //    println!("2. {}", two());
+    println!("1. {}", one());
+    println!("2. {}", two());
 }
 
 fn one() -> u32 {
-    let mut two_letters = 0;
-    let mut three_letters = 0;
+    let (mut twos, mut threes) = (0, 0);
 
     let mut box_ids = INPUT.split_whitespace().peekable();
-    let mut map: HashMap<char, u32> = HashMap::with_capacity(box_ids.peek().unwrap().len());
+    let mut frequencies: HashMap<char, u32> = HashMap::with_capacity(box_ids.peek().unwrap().len());
 
     for box_id in box_ids {
         box_id.chars().for_each(|letter| {
-            let count = map.get(&letter).map_or(1, |count| count + 1);
-            map.insert(letter, count);
+            let count = frequencies.get(&letter).map_or(1, |count| count + 1);
+            frequencies.insert(letter, count);
         });
 
-        let mut has_two = false;
-        let mut has_three = false;
-        for count in map.values() {
-            if *count == 2 && !has_two {
-                has_two = true;
-                two_letters += 1;
-            } else if *count == 3 && !has_three {
-                has_three = true;
-                three_letters += 1;
-            }
-        }
+        // casting boolean to integer. not pretty :/
+        twos += frequencies.values().any(|&count| count == 2) as u32;
+        threes += frequencies.values().any(|&count| count == 3) as u32;
 
-        map.clear();
+        frequencies.clear();
     }
 
-    two_letters * three_letters
+    twos * threes
 }
 
-fn two() -> u32 {
-    use std::iter::ExactSizeIterator;
-    let mut box_ids = INPUT.split_whitespace();
-    let box_id_chars = Vec::with_capacity(box_ids.len());
+fn two() -> String {
+    let box_ids: Vec<_> = INPUT
+        .split_whitespace()
+        .collect();
 
-    0
+    let mut common = Vec::with_capacity(box_ids.first().unwrap().len());
+
+    for box_id in box_ids.iter() {
+        for other_box_id in box_ids.iter() {
+            let mut different = 0;
+            for (c1, c2) in box_id.chars().zip(other_box_id.chars()) {
+                if different > 1 {
+                    break;
+                }
+
+                if c1 == c2 {
+                    common.push(c1);
+                } else {
+                    different += 1;
+                }
+            }
+
+            if different == 1 {
+                return common.iter().cloned().collect();
+            }
+
+            common.clear();
+        }
+    }
+
+    // a proper solution would be to return Option::None instead of an empty string
+    String::new()
 }
