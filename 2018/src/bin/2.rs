@@ -30,9 +30,7 @@ fn one() -> u32 {
 }
 
 fn two() -> String {
-    let box_ids: Vec<_> = INPUT
-        .split_whitespace()
-        .collect();
+    let box_ids: Vec<_> = INPUT.split_whitespace().collect();
 
     let mut common = Vec::with_capacity(box_ids.first().unwrap().len());
 
