@@ -10,7 +10,7 @@ lazy_static! {
 type POINTS = HashMap<(u16, u16), u32>;
 
 fn main() {
-    let mut points = HashMap::with_capacity(1000 * 1000);
+    let mut points = HashMap::new();
 
     println!("1. {}", one(&mut points));
     println!("2. {}", two(&mut points));
